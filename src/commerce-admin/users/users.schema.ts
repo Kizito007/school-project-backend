@@ -23,4 +23,4 @@ export class CommerceUser {
   securityAnswer: string;
 }
 export type CommerceUserDocument = CommerceUser & Document;
-export const CommmerceUserSchema = SchemaFactory.createForClass(CommerceUser);
+export const CommerceUserSchema = SchemaFactory.createForClass(CommerceUser);

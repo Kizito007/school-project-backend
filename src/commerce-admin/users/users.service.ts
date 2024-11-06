@@ -76,114 +76,20 @@ export class UsersService {
     }
   }
 
-  //   async updateUser({ ...updateUserDto }: UpdateUserDto) {
-  //     try {
-  //       const userId = updateUserDto.userId;
-  //       const user = await this.findUser('userId', userId);
-  //       await this.checkIfActive(userId);
-  //       if (!user) {
-  //         throw UserNotFoundException(this.i18n);
-  //       }
-  //       if (updateUserDto.residence) {
-  //         const { residence } = updateUserDto;
-  //         updateUserDto.residence = { ...user.residence, ...residence };
-  //       }
-  //       if (updateUserDto.location) {
-  //         if (
-  //           !Array.isArray(updateUserDto.location.coordinates) ||
-  //           updateUserDto.location.coordinates.length !== 2 ||
-  //           updateUserDto.location.coordinates.some(
-  //             (coord) => !Number.isFinite(coord),
-  //           )
-  //         ) {
-  //           throw InvalidCoordinatesException(this.i18n);
-  //         }
-  //       }
-
-  //       if (
-  //         user.accountType === AccountType.ENTERTAINER &&
-  //         updateUserDto.services &&
-  //         !user.isProfileSetupComplete
-  //       ) {
-  //         const countryCurrencyMap = {
-  //           [Country.NO]: Currency.Krona,
-  //           [Country.NG]: Currency.Naira,
-  //         };
-
-  //         const currency = countryCurrencyMap[user.country];
-  //         if (!currency) {
-  //           throw UnSupportedCountryException(this.i18n);
-  //         }
-
-  //         updateUserDto.services.currency = currency;
-  //         await this.walletService.createWallet({
-  //           userId,
-  //           currency,
-  //         });
-  //       }
-
-  //       if (
-  //         user.accountType === AccountType.ENTERTAINER &&
-  //         updateUserDto.services
-  //       ) {
-  //         const { services } = updateUserDto;
-  //         const validCategories = Object.values(EntertainerCategories);
-
-  //         if (!validCategories.includes(services.category)) {
-  //           throw InvalidCategoryException(this.i18n);
-  //         }
-
-  //         services.category = this.i18n.t(
-  //           `test.categories.${services.category}`,
-  //           {
-  //             lang: 'en',
-  //           },
-  //         );
-  //         updateUserDto.services = {
-  //           ...user.services,
-  //           ...services,
-  //         };
-  //       } else {
-  //         delete updateUserDto.services;
-  //       }
-
-  //       if (updateUserDto.entertainerName) {
-  //         const existingUserName = await this.getCredential(
-  //           'entertainerName',
-  //           updateUserDto.entertainerName,
-  //         );
-  //         if (
-  //           existingUserName?.entertainerName &&
-  //           existingUserName.userId !== userId
-  //         ) {
-  //           throw ExistingEntertainerNameException(this.i18n);
-  //         }
-  //       }
-
-  //       return await this.userModel.findOneAndUpdate(
-  //         { userId },
-  //         { $set: updateUserDto },
-  //         { new: true },
-  //       );
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }
-
-  //   async updateField(
-  //     key: string,
-  //     value: string,
-  //     field: string,
-  //     value2: string | boolean | object,
-  //   ): Promise<User | null | undefined> {
-  //     try {
-  //       return await this.userModel.findOneAndUpdate(
-  //         { [key]: value },
-  //         { $set: { [field]: value2 } },
-  //         { lean: true, new: true },
-  //       );
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }
+  async updateField(
+    key: string,
+    value: string,
+    field: string,
+    value2: string | boolean | object,
+  ): Promise<CommerceUser | null | undefined> {
+    try {
+      return await this.userModel.findOneAndUpdate(
+        { [key]: value },
+        { $set: { [field]: value2 } },
+        { lean: true, new: true },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
