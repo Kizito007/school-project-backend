@@ -43,12 +43,10 @@ export class AdminMgmtService {
         },
       },
     ]);
-    console.log(result);
 
     // Create an object to store the counts
     const data = {
       SUPER_ADMIN: 0,
-      VIEWER: 0,
       EDITOR: 0,
       ARBITRATOR: 0,
     };

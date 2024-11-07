@@ -18,22 +18,24 @@ import {
 } from 'src/common/exceptions';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from './admin.enum';
-// import { JwtPartialAuthGuard } from 'src/commerce-admin/auth/jwt-partial-auth.guard';
 import { JwtPartialAuthGuard } from '../auth/admin-jwt-partial-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
+import { ResponseMessage } from 'src/common/decorators';
 
 @Controller('commerce/admin/admin-mgmt')
 export class AdminMgmtController {
   constructor(private readonly adminMgmtService: AdminMgmtService) {}
 
   @Get('admins')
-  @UseGuards(JwtPartialAuthGuard)
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Admins fetched successfully')
   async getAdmins() {
     return await this.adminMgmtService.getAdmins();
   }
 
   @Get('admins/stats')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Admin stats fetched successfully')
   async getAdminStats() {
     return await this.adminMgmtService.getAdminStats();
   }
