@@ -4,12 +4,13 @@ import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
 import { CommerceUser, CommerceUserSchema } from '../users/users.schema';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -17,7 +18,6 @@ import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
       { name: CommerceUser.name, schema: CommerceUserSchema },
       { name: VerifyEmail.name, schema: VerifyEmailSchema },
     ]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
@@ -31,7 +31,7 @@ import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, UsersService],
+  providers: [AuthService, LocalStrategy, UsersService, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

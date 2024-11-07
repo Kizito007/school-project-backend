@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { AdminLocalAuthGuard } from './admin-local-auth.guard';
+@Controller('commerce/admin/auth')
+export class AuthController {
+  constructor() {}
 
-@Controller('auth')
-export class AuthController {}
+  @Post('login')
+  @UseGuards(AdminLocalAuthGuard)
+  async loginAdmin(@Req() req) {
+    return req.user;
+  }
+}

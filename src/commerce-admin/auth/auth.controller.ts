@@ -6,23 +6,27 @@ import { LoginDto, VerifyEmailDto } from './auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthUser } from './auth-user.decorator';
 import { CommerceUserDocument } from '../users/users.schema';
+import { ResponseMessage } from 'src/common/decorators';
 
-@Controller('auth')
+@Controller('commerce/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @ResponseMessage('Login successful')
   async login(@Body() { email, password }: LoginDto) {
     return this.authService.login(email, password);
   }
 
   @Post('register')
+  @ResponseMessage('Registration successful')
   async addUser(@Body() addUserDto: AddUserDto) {
     return await this.authService.registerUser(addUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('user')
+  @ResponseMessage('User fetched successfully')
   async getAuthUser(@AuthUser() user: CommerceUserDocument) {
     return user;
   }

@@ -6,6 +6,6 @@ import { OrdersModule } from './orders/orders.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [AdminModule, UsersModule, ProductsModule, OrdersModule, AuthModule]
+  imports: [AdminModule, UsersModule, ProductsModule, OrdersModule, AuthModule],
 })
 export class CommerceAdminModule {}

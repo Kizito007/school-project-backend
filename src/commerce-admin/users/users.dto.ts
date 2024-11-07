@@ -14,19 +14,20 @@ export class UserDto {
   readonly userId: string;
 }
 
+export type UserPayload = Readonly<{
+  email: string;
+  userId: string;
+  emailVerified: boolean;
+}>;
+
 export class AddUserDto {
   @IsNotEmpty()
   @IsString()
   readonly username: string;
 
-  @IsNotEmpty()
-  @IsString()
-  readonly securityAnswer: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  readonly gender: string;
+  // @IsOptional()
+  // @IsString()
+  // readonly securityAnswer: string;
 
   @IsNotEmpty()
   @IsEmail()

@@ -7,7 +7,7 @@ export class CommerceUser {
   @Prop({ unique: true, default: () => `US${KeyGen.gen(13)}` })
   userId: string;
 
-  @Prop({ required: true })
+  @Prop({ default: null })
   username: string;
 
   @Prop({ required: true })
@@ -19,8 +19,8 @@ export class CommerceUser {
   @Prop({ required: true, select: false })
   password: string;
 
-  @Prop({ default: null })
-  securityAnswer: string;
+  // @Prop({ default: null })
+  // securityAnswer: string;
 }
 export type CommerceUserDocument = CommerceUser & Document;
 export const CommerceUserSchema = SchemaFactory.createForClass(CommerceUser);
