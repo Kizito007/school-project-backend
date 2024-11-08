@@ -69,3 +69,6 @@ export const AdminNotFoundException = () =>
 
 export const ProductNotFoundException = () =>
   new NotFoundException('product not found');
+
+export const OrderNotFoundException = () =>
+  new NotFoundException('order not found');

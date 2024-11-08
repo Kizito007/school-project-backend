@@ -22,6 +22,7 @@ export class ProductsService {
         { _id: 0 },
         { lean: true },
       );
+      if (!product) throw ProductNotFoundException();
 
       return product;
     } catch (error) {
@@ -44,7 +45,7 @@ export class ProductsService {
     }
   }
 
-  async updateUser({ ...updateProductDto }: UpdateProductDto) {
+  async updateProduct({ ...updateProductDto }: UpdateProductDto) {
     try {
       const productId = updateProductDto.productId;
       const product = await this.findProduct('productId', productId);
