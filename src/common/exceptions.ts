@@ -66,3 +66,6 @@ export const UsernameAlreadyExistsException = () =>
 
 export const AdminNotFoundException = () =>
   new NotFoundException('admin not found');
+
+export const ProductNotFoundException = () =>
+  new NotFoundException('product not found');
