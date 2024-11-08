@@ -30,6 +30,17 @@ export class OrdersService {
     }
   }
 
+  async findOrders() {
+    try {
+      const orders = await this.orderModel.findOne({});
+      const totalOrdersCount = await this.orderModel.countDocuments();
+
+      return { orders, totalOrdersCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createOrder({
     ...createOrderDto
   }: CreateOrderDto): Promise<OrderDocument> {

@@ -30,6 +30,17 @@ export class ProductsService {
     }
   }
 
+  async getProducts() {
+    try {
+      const products = await this.productModel.find({});
+      const totalProductsCount = await this.productModel.countDocuments();
+
+      return { products, totalProductsCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async addProduct({
     ...addProductDto
   }: AddProductDto): Promise<ProductDocument> {
