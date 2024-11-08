@@ -18,6 +18,9 @@ export class Order {
 
   @Prop({ default: null })
   productId: string;
+
+  @Prop({ default: null })
+  userId: string;
 }
 export type OrderDocument = Order & Document;
 export const OrderSchema = SchemaFactory.createForClass(Order);

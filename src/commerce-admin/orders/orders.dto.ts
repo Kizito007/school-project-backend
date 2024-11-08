@@ -16,4 +16,6 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsNumber()
   readonly amount: number;
+
+  userId: string;
 }
