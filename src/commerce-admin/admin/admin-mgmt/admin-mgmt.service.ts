@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CommerceAdmin, CommerceAdminDocument } from './admin.schema';
 import { AddManagerDto, UpdateManagerRoleDto } from './admin-mgmt.dto';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class AdminMgmtService {
   constructor(
     @InjectModel(CommerceAdmin.name)
     private readonly adminModel: Model<CommerceAdminDocument>,
+    private readonly filesService: FilesService,
   ) {}
 
   async getAdmins() {
@@ -84,7 +86,17 @@ export class AdminMgmtService {
     );
   }
 
-  async addManager(addManagerDto: AddManagerDto) {
+  async addManager(addManagerDto: AddManagerDto, file: Express.Multer.File) {
+    if (file) {
+      const upload = await this.filesService.uploadFile(file);
+
+      addManagerDto.photo = {
+        content: 'profile-picture',
+        size: upload.bytes,
+        mimeType: file.mimetype,
+        url: upload.url,
+      };
+    }
     return await this.adminModel.create(addManagerDto);
   }
 

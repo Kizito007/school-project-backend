@@ -8,11 +8,14 @@ import { AdminMgmtModule } from '../admin-mgmt/admin-mgmt.module';
 import { CommerceAdmin, CommerceAdminSchema } from '../admin-mgmt/admin.schema';
 import { AdminMgmtService } from '../admin-mgmt/admin-mgmt.service';
 import { ConfigService } from '@nestjs/config';
+import { CloudinaryModule } from 'src/config/cloudinary.module';
+import { FilesService } from 'src/files/files.service';
 
 @Module({
   imports: [
     PassportModule,
     AdminMgmtModule,
+    CloudinaryModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -28,7 +31,7 @@ import { ConfigService } from '@nestjs/config';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AdminLocalStrategy, AdminMgmtService],
+  providers: [AdminLocalStrategy, AdminMgmtService, FilesService],
   exports: [],
 })
 export class AuthModule {}

@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { AdminRole } from './admin.enum';
+import { File } from 'src/common/dtos';
 
 export class AddManagerDto {
   @IsNotEmpty()
@@ -30,10 +31,6 @@ export class AddManagerDto {
   readonly email: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
-  readonly phone: string;
-
-  @IsNotEmpty()
   @IsString()
   @MinLength(8)
   password: string;
@@ -49,6 +46,8 @@ export class AddManagerDto {
   _username: string;
 
   addedById: string;
+
+  photo: File;
 }
 
 export class SignInDto {

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { KeyGen } from 'src/common/utils/key-gen';
 import { AdminRole } from './admin.enum';
+import { File } from 'src/common/dtos';
 
 export type CommerceAdminDocument = CommerceAdmin & Document;
 @Schema({ timestamps: true })
@@ -32,5 +33,8 @@ export class CommerceAdmin {
 
   @Prop({ default: null })
   securityAnswer: string;
+
+  @Prop({ default: null })
+  photo: File;
 }
 export const CommerceAdminSchema = SchemaFactory.createForClass(CommerceAdmin);

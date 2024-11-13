@@ -7,6 +7,7 @@ import { FacesModule } from './faces/faces.module';
 import { CommerceAdminModule } from './commerce-admin/commerce-admin.module';
 import { EmployeeAdminModule } from './employee-admin/employee-admin.module';
 import { SchoolAdminModule } from './school-admin/school-admin.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SchoolAdminModule } from './school-admin/school-admin.module';
     CommerceAdminModule,
     EmployeeAdminModule,
     SchoolAdminModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

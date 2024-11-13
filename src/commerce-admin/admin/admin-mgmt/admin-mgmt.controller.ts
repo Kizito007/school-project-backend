@@ -6,6 +6,8 @@ import {
   Body,
   Patch,
   Param,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthUser } from 'src/commerce-admin/auth/auth-user.decorator';
 import { AdminMgmtService } from './admin-mgmt.service';
@@ -21,6 +23,7 @@ import { AdminRole } from './admin.enum';
 import { JwtPartialAuthGuard } from '../auth/admin-jwt-partial-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { ResponseMessage } from 'src/common/decorators';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('commerce/admin/admin-mgmt')
 export class AdminMgmtController {
@@ -49,9 +52,12 @@ export class AdminMgmtController {
   @Post('admins')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
   @Roles(AdminRole.SUPER_ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   async addManager(
     @Body() addManagerDto: AddManagerDto,
     @AuthUser() { userId }: UserPayload,
+    @UploadedFile()
+    file: Express.Multer.File,
   ) {
     addManagerDto.addedById = userId;
 
@@ -79,7 +85,7 @@ export class AdminMgmtController {
     addManagerDto.password = passwordHash;
     addManagerDto._username = addManagerDto.username.toLocaleLowerCase();
     addManagerDto.adminLastSeenTimestamp = new Date();
-    return await this.adminMgmtService.addManager(addManagerDto);
+    return await this.adminMgmtService.addManager(addManagerDto, file);
   }
 
   @Patch('admins/:adminId/role')
