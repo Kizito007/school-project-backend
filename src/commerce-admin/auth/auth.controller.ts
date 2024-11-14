@@ -5,7 +5,7 @@ import { AddUserDto } from '../users/users.dto';
 import { LoginDto, VerifyEmailDto } from './auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthUser } from './auth-user.decorator';
-import { CommerceUserDocument } from '../users/users.schema';
+import { UserDocument } from '../users/users.schema';
 import { ResponseMessage } from 'src/common/decorators';
 
 @Controller('commerce/auth')
@@ -27,7 +27,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   @ResponseMessage('User fetched successfully')
-  async getAuthUser(@AuthUser() user: CommerceUserDocument) {
+  async getAuthUser(@AuthUser() user: UserDocument) {
     return user;
   }
 

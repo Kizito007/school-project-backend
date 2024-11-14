@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { KeyGen } from 'src/common/utils/key-gen';
-import { CommerceUser, CommerceUserDocument } from '../users/users.schema';
+import { User, UserDocument } from '../users/users.schema';
 import * as bcrypt from 'bcrypt';
 import { VerifyEmail, VerifyEmailDocument } from './verify-email.schema';
 import { ConfigService } from '@nestjs/config';
@@ -22,13 +22,13 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private usersService: UsersService,
-    @InjectModel(CommerceUser.name)
-    private readonly userModel: Model<CommerceUserDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
     @InjectModel(VerifyEmail.name)
     private readonly verifyEmailModel: Model<VerifyEmailDocument>,
   ) {}
 
-  async validateUser(userId: string): Promise<CommerceUser> {
+  async validateUser(userId: string): Promise<User> {
     try {
       const user = await this.usersService.findUser('userId', userId);
 

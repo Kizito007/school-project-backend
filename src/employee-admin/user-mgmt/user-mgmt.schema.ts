@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { KeyGen } from 'src/common/utils/key-gen';
 
 @Schema({ timestamps: true })
-export class User {
+export class EmployeeUser {
   @Prop({ unique: true, default: () => `US${KeyGen.gen(13)}` })
   userId: string;
 
@@ -13,11 +13,8 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ default: false })
-  emailVerified: boolean;
-
   @Prop({ required: true, select: false })
   password: string;
 }
-export type UserDocument = User & Document;
-export const UserSchema = SchemaFactory.createForClass(User);
+export type EmployeeUserDocument = EmployeeUser & Document;
+export const EmployeeUserSchema = SchemaFactory.createForClass(EmployeeUser);

@@ -6,20 +6,17 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { CommerceUser, CommerceUserDocument } from './users.schema';
+import { User, UserDocument } from './users.schema';
 import { AddUserDto } from './users.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(CommerceUser.name)
-    private readonly userModel: Model<CommerceUserDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async findUser(
-    field: string,
-    key: string,
-  ): Promise<CommerceUser | null | undefined> {
+  async findUser(field: string, key: string): Promise<User | null | undefined> {
     try {
       const user = await this.userModel.findOne(
         { [field]: key },
@@ -36,7 +33,7 @@ export class UsersService {
   async getCredential(
     field: string,
     key: string,
-  ): Promise<Partial<CommerceUser | null>> {
+  ): Promise<Partial<User | null>> {
     try {
       return await this.userModel.findOne(
         { [field]: key },
@@ -54,7 +51,7 @@ export class UsersService {
     }
   }
 
-  async addUser({ ...addUserDto }: AddUserDto): Promise<CommerceUserDocument> {
+  async addUser({ ...addUserDto }: AddUserDto): Promise<UserDocument> {
     try {
       // Check if user already exists
       const existingUser = await this.getCredential('email', addUserDto.email);
@@ -81,7 +78,7 @@ export class UsersService {
     value: string,
     field: string,
     value2: string | boolean | object,
-  ): Promise<CommerceUser | null | undefined> {
+  ): Promise<User | null | undefined> {
     try {
       return await this.userModel.findOneAndUpdate(
         { [key]: value },

@@ -21,13 +21,9 @@ export type UserPayload = Readonly<{
 }>;
 
 export class AddUserDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly username: string;
-
-  // @IsOptional()
-  // @IsString()
-  // readonly securityAnswer: string;
 
   @IsNotEmpty()
   @IsEmail()

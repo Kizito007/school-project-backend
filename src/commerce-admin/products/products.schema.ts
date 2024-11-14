@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { File } from 'src/common/dtos';
 import { KeyGen } from 'src/common/utils/key-gen';
 
 @Schema({ timestamps: true })
@@ -30,6 +31,9 @@ export class Product {
 
   @Prop({ default: 0 })
   totalStock: number;
+
+  @Prop({ default: null })
+  photo: File;
 }
 export type ProductDocument = Product & Document;
 export const ProductSchema = SchemaFactory.createForClass(Product);

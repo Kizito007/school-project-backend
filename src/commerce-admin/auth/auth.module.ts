@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
-import { CommerceUser, CommerceUserSchema } from '../users/users.schema';
+import { User, UserSchema } from '../users/users.schema';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
@@ -15,7 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: CommerceUser.name, schema: CommerceUserSchema },
+      { name: User.name, schema: UserSchema },
       { name: VerifyEmail.name, schema: VerifyEmailSchema },
     ]),
     UsersModule,

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CommerceUser } from '../users/users.schema';
+import { User } from '../users/users.schema';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(
@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: { userId: string }): Promise<CommerceUser> {
+  async validate(payload: { userId: string }): Promise<User> {
     const user = await this.authService.validateUser(payload.userId);
     if (!user) {
       throw new UnauthorizedException('Invalid token');
