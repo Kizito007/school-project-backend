@@ -13,6 +13,10 @@ import {
 } from './admin-mgmt.dto';
 import { FilesService } from 'src/files/files.service';
 import { FacesService } from 'src/faces/faces.service';
+import {
+  FaceTokenExistsException,
+  FaceTokenInexistingException,
+} from 'src/common/exceptions';
 
 @Injectable()
 export class AdminMgmtService {
@@ -116,7 +120,7 @@ export class AdminMgmtService {
     const faceCompareToken = await this.faceCompareTokenModel.findOne({
       adminId,
     });
-    if (!faceCompareToken) return false;
+    if (!faceCompareToken) throw FaceTokenInexistingException();
     const admin = await this.adminModel.findOne({ adminId });
     const imageUrl1 = faceCompareToken.photo?.url;
     const imageUrl2 = admin.photo?.url;
@@ -142,6 +146,12 @@ export class AdminMgmtService {
         mimeType: file.mimetype,
         url: upload.url,
       };
+    }
+    const faceCompareToken = await this.faceCompareTokenModel.findOne({
+      adminId: uploadTempFaceDto.adminId,
+    });
+    if (faceCompareToken) {
+      throw FaceTokenExistsException();
     }
     return await this.faceCompareTokenModel.create(uploadTempFaceDto);
   }

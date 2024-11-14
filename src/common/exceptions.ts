@@ -58,6 +58,12 @@ export const UnableToUploadFileException = () =>
 export const UnableToCreateAccountException = () =>
   new InternalServerErrorException('unable to create account');
 
+export const FaceTokenExistsException = () =>
+  new ConflictException('face token already exists');
+
+export const FaceTokenInexistingException = () =>
+  new BadRequestException('face token does not exist');
+
 export const DataAlreadyExistsException = () =>
   new ForbiddenException('data already exists');
 

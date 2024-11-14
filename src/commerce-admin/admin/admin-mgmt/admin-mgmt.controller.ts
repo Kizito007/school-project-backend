@@ -49,6 +49,7 @@ export class AdminMgmtController {
 
   @Get('admins/:adminId')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Admin fetched successfully')
   async getAdmin(@Param('adminId') adminId: string) {
     return await this.adminMgmtService.getAdmin('adminId', adminId);
   }
@@ -56,6 +57,7 @@ export class AdminMgmtController {
   @Post('admins')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
   @Roles(AdminRole.SUPER_ADMIN)
+  @ResponseMessage('Admin added successfully')
   @UseInterceptors(FileInterceptor('file'))
   async addManager(
     @Body() addManagerDto: AddManagerDto,
@@ -95,6 +97,7 @@ export class AdminMgmtController {
   @Post('upload-face')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
+  @ResponseMessage('Photo uploaded successfully')
   async uploadFace(
     @Body() uploadTempFaceDto: UploadTempFaceDto,
     @AuthUser() { userId }: UserPayload,
@@ -107,6 +110,7 @@ export class AdminMgmtController {
 
   @Post('compare-face')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Face comparison successful')
   async compareFace(@AuthUser() { userId }: UserPayload) {
     return await this.adminMgmtService.compareFace(userId);
   }
@@ -114,6 +118,7 @@ export class AdminMgmtController {
   @Patch('admins/:adminId/role')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
   @Roles(AdminRole.SUPER_ADMIN)
+  @ResponseMessage('Admin role updated successfully')
   async updateManagerRole(
     @Body() updateManagerRoleDto: UpdateManagerRoleDto,
     @Param('adminId') adminId: string,
