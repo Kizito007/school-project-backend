@@ -4,7 +4,6 @@ import {
   IsString,
   MaxLength,
   IsEmail,
-  IsPhoneNumber,
   IsOptional,
   MinLength,
   IsDate,
@@ -62,6 +61,12 @@ export class UpdateManagerRoleDto {
   @IsNotEmpty()
   @IsEnum(AdminRole)
   readonly role: string;
+
+  adminId: string;
+}
+
+export class UploadTempFaceDto {
+  photo: File;
 
   adminId: string;
 }

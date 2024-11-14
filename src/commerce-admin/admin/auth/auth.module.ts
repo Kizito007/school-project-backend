@@ -10,12 +10,19 @@ import { AdminMgmtService } from '../admin-mgmt/admin-mgmt.service';
 import { ConfigService } from '@nestjs/config';
 import { CloudinaryModule } from 'src/config/cloudinary.module';
 import { FilesService } from 'src/files/files.service';
+import {
+  FaceCompareToken,
+  FaceCompareTokenSchema,
+} from 'src/faces/face-compare.schema';
+import { HttpModule } from '@nestjs/axios';
+import { FacesService } from 'src/faces/faces.service';
 
 @Module({
   imports: [
     PassportModule,
     AdminMgmtModule,
     CloudinaryModule,
+    HttpModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -28,10 +35,11 @@ import { FilesService } from 'src/files/files.service';
     }),
     MongooseModule.forFeature([
       { name: CommerceAdmin.name, schema: CommerceAdminSchema },
+      { name: FaceCompareToken.name, schema: FaceCompareTokenSchema },
     ]),
   ],
   controllers: [AuthController],
-  providers: [AdminLocalStrategy, AdminMgmtService, FilesService],
+  providers: [AdminLocalStrategy, AdminMgmtService, FilesService, FacesService],
   exports: [],
 })
 export class AuthModule {}

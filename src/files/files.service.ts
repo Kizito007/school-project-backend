@@ -1,4 +1,3 @@
-// src/file/file.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 import {
   v2 as cloudinary,
@@ -26,5 +25,15 @@ export class FilesService {
         )
         .end(file.buffer);
     });
+  }
+
+  async deleteImage(publicId: string) {
+    try {
+      const result = await cloudinary.uploader.destroy(publicId);
+      return result;
+    } catch (error) {
+      console.error('Error deleting from Cloudinary:', error);
+      throw new Error('Failed to delete image from Cloudinary');
+    }
   }
 }

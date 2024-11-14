@@ -2,15 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CommerceAdmin, CommerceAdminDocument } from './admin.schema';
-import { AddManagerDto, UpdateManagerRoleDto } from './admin-mgmt.dto';
+import {
+  FaceCompareToken,
+  FaceCompareTokenDocument,
+} from '../../../faces/face-compare.schema';
+import {
+  AddManagerDto,
+  UpdateManagerRoleDto,
+  UploadTempFaceDto,
+} from './admin-mgmt.dto';
 import { FilesService } from 'src/files/files.service';
+import { FacesService } from 'src/faces/faces.service';
 
 @Injectable()
 export class AdminMgmtService {
   constructor(
     @InjectModel(CommerceAdmin.name)
     private readonly adminModel: Model<CommerceAdminDocument>,
+    @InjectModel(FaceCompareToken.name)
+    private readonly faceCompareTokenModel: Model<FaceCompareTokenDocument>,
     private readonly filesService: FilesService,
+    private readonly facesService: FacesService,
   ) {}
 
   async getAdmins() {
@@ -98,6 +110,40 @@ export class AdminMgmtService {
       };
     }
     return await this.adminModel.create(addManagerDto);
+  }
+
+  async compareFace(adminId: string) {
+    const faceCompareToken = await this.faceCompareTokenModel.findOne({
+      adminId,
+    });
+    if (!faceCompareToken) return false;
+    const admin = await this.adminModel.findOne({ adminId });
+    const imageUrl1 = faceCompareToken.photo?.url;
+    const imageUrl2 = admin.photo?.url;
+    const comparison = await this.facesService.compareFace(
+      imageUrl1,
+      imageUrl2,
+    );
+    await this.filesService.deleteImage(faceCompareToken.photo?.content);
+    await this.faceCompareTokenModel.findOneAndDelete({ adminId });
+    return comparison;
+  }
+
+  async uploadTempFace(
+    uploadTempFaceDto: UploadTempFaceDto,
+    file: Express.Multer.File,
+  ) {
+    if (file) {
+      const upload = await this.filesService.uploadFile(file);
+
+      uploadTempFaceDto.photo = {
+        content: upload.public_id,
+        size: upload.bytes,
+        mimeType: file.mimetype,
+        url: upload.url,
+      };
+    }
+    return await this.faceCompareTokenModel.create(uploadTempFaceDto);
   }
 
   async updateManagerRole({ adminId, role }: UpdateManagerRoleDto) {

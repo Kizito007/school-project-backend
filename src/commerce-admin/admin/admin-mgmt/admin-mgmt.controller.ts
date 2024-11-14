@@ -12,7 +12,11 @@ import {
 import { AuthUser } from 'src/commerce-admin/auth/auth-user.decorator';
 import { AdminMgmtService } from './admin-mgmt.service';
 import { UserPayload } from 'src/commerce-admin/users/users.dto';
-import { AddManagerDto, UpdateManagerRoleDto } from './admin-mgmt.dto';
+import {
+  AddManagerDto,
+  UpdateManagerRoleDto,
+  UploadTempFaceDto,
+} from './admin-mgmt.dto';
 import { TokenHandler } from 'src/common/utils/token-handler';
 import {
   EmailAlreadyUsedException,
@@ -86,6 +90,25 @@ export class AdminMgmtController {
     addManagerDto._username = addManagerDto.username.toLocaleLowerCase();
     addManagerDto.adminLastSeenTimestamp = new Date();
     return await this.adminMgmtService.addManager(addManagerDto, file);
+  }
+
+  @Post('upload-face')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFace(
+    @Body() uploadTempFaceDto: UploadTempFaceDto,
+    @AuthUser() { userId }: UserPayload,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ) {
+    uploadTempFaceDto.adminId = userId;
+    return await this.adminMgmtService.uploadTempFace(uploadTempFaceDto, file);
+  }
+
+  @Post('compare-face')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  async compareFace(@AuthUser() { userId }: UserPayload) {
+    return await this.adminMgmtService.compareFace(userId);
   }
 
   @Patch('admins/:adminId/role')
