@@ -15,9 +15,9 @@ export class UserDto {
 }
 
 export type UserPayload = Readonly<{
-  email: string;
+  email?: string;
   userId: string;
-  emailVerified: boolean;
+  emailVerified?: boolean;
 }>;
 
 export class AddUserDto {

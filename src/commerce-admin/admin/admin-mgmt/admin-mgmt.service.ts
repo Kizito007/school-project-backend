@@ -6,17 +6,10 @@ import {
   FaceCompareToken,
   FaceCompareTokenDocument,
 } from '../../../faces/face-compare.schema';
-import {
-  AddManagerDto,
-  UpdateManagerRoleDto,
-  UploadTempFaceDto,
-} from './admin-mgmt.dto';
+import { AddManagerDto, UpdateManagerRoleDto } from './admin-mgmt.dto';
 import { FilesService } from 'src/files/files.service';
 import { FacesService } from 'src/faces/faces.service';
-import {
-  FaceTokenExistsException,
-  FaceTokenInexistingException,
-} from 'src/common/exceptions';
+import { FaceTokenInexistingException } from 'src/common/exceptions';
 
 @Injectable()
 export class AdminMgmtService {
@@ -131,29 +124,6 @@ export class AdminMgmtService {
     await this.filesService.deleteImage(faceCompareToken.photo?.content);
     await this.faceCompareTokenModel.findOneAndDelete({ adminId });
     return comparison;
-  }
-
-  async uploadTempFace(
-    uploadTempFaceDto: UploadTempFaceDto,
-    file: Express.Multer.File,
-  ) {
-    if (file) {
-      const upload = await this.filesService.uploadFile(file);
-
-      uploadTempFaceDto.photo = {
-        content: upload.public_id,
-        size: upload.bytes,
-        mimeType: file.mimetype,
-        url: upload.url,
-      };
-    }
-    const faceCompareToken = await this.faceCompareTokenModel.findOne({
-      adminId: uploadTempFaceDto.adminId,
-    });
-    if (faceCompareToken) {
-      throw FaceTokenExistsException();
-    }
-    return await this.faceCompareTokenModel.create(uploadTempFaceDto);
   }
 
   async updateManagerRole({ adminId, role }: UpdateManagerRoleDto) {

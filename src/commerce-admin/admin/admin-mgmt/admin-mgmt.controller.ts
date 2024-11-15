@@ -28,10 +28,14 @@ import { JwtPartialAuthGuard } from '../auth/admin-jwt-partial-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { ResponseMessage } from 'src/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FacesService } from 'src/faces/faces.service';
 
 @Controller('commerce/admin/admin-mgmt')
 export class AdminMgmtController {
-  constructor(private readonly adminMgmtService: AdminMgmtService) {}
+  constructor(
+    private readonly adminMgmtService: AdminMgmtService,
+    private readonly facesService: FacesService,
+  ) {}
 
   @Get('admins')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
@@ -105,7 +109,7 @@ export class AdminMgmtController {
     file: Express.Multer.File,
   ) {
     uploadTempFaceDto.adminId = userId;
-    return await this.adminMgmtService.uploadTempFace(uploadTempFaceDto, file);
+    return await this.facesService.uploadTempFace(uploadTempFaceDto, file);
   }
 
   @Post('compare-face')
