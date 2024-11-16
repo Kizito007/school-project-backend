@@ -9,8 +9,13 @@ import {
   FaceCompareToken,
   FaceCompareTokenSchema,
 } from 'src/faces/face-compare.schema';
+import {
+  Attendance,
+  AttendanceSchema,
+} from '../attendance-mgmt/attendance-mgmt.schema';
 import { FilesService } from 'src/files/files.service';
 import { CloudinaryModule } from 'src/config/cloudinary.module';
+import { AttendanceMgmtService } from '../attendance-mgmt/attendance-mgmt.service';
 
 @Module({
   imports: [
@@ -19,9 +24,15 @@ import { CloudinaryModule } from 'src/config/cloudinary.module';
     MongooseModule.forFeature([
       { name: Employee.name, schema: EmployeeSchema },
       { name: FaceCompareToken.name, schema: FaceCompareTokenSchema },
+      { name: Attendance.name, schema: AttendanceSchema },
     ]),
   ],
   controllers: [EmployeeMgmtController],
-  providers: [EmployeeMgmtService, FacesService, FilesService],
+  providers: [
+    EmployeeMgmtService,
+    FacesService,
+    FilesService,
+    AttendanceMgmtService,
+  ],
 })
 export class EmployeeMgmtModule {}

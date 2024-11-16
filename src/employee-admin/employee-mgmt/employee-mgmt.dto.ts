@@ -1,5 +1,6 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsEnum } from 'class-validator';
 import { File } from 'src/common/dtos';
+import { Departments } from 'src/common/enums';
 
 export class AddEmployeeDto {
   @IsOptional()
@@ -17,7 +18,7 @@ export class AddEmployeeDto {
   @IsOptional()
   photo: File;
 
+  @IsEnum(Departments)
   @IsOptional()
-  @IsString()
-  departmentId: string;
+  department: Departments;
 }

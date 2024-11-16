@@ -15,6 +15,7 @@ import { UploadTempFaceDto } from 'src/commerce-admin/admin/admin-mgmt/admin-mgm
 import { EmployeeMgmtService } from './employee-mgmt.service';
 import { JwtAuthGuard } from 'src/commerce-admin/auth/jwt-auth.guard';
 import { AddEmployeeDto } from './employee-mgmt.dto';
+import { Departments } from 'src/common/enums';
 
 @Controller('employee/employee-mgmt')
 export class EmployeeMgmtController {
@@ -31,6 +32,20 @@ export class EmployeeMgmtController {
       'employeeId',
       employeeId,
     );
+  }
+
+  @Get('employees')
+  @UseGuards(JwtAuthGuard)
+  @ResponseMessage('Employees fetched successfully')
+  async getEmployees() {
+    return await this.employeeMgmtService.getEmployees();
+  }
+
+  @Get('departments')
+  @ResponseMessage('Departments fetched successfully')
+  async getDepartments() {
+    const departments = Object.values(Departments);
+    return departments;
   }
 
   @Post('employees')

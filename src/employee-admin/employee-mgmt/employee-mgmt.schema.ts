@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { File } from 'src/common/dtos';
+import { Departments } from 'src/common/enums';
 import { KeyGen } from 'src/common/utils/key-gen';
 
 @Schema({ timestamps: true })
@@ -17,8 +18,8 @@ export class Employee {
   @Prop({ default: null })
   role: string;
 
-  @Prop({ default: null })
-  departmentId: string;
+  @Prop({ default: null, enum: Departments })
+  department: Departments;
 
   @Prop({ default: null })
   photo: File;
