@@ -10,16 +10,19 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(AdminLocalAuthGuard)
+  @ResponseMessage('Login successful')
   async loginAdmin(@Req() req) {
     return req.user;
   }
 
   @Post('send-email-token')
+  @ResponseMessage('Email token sent successfully')
   async resendEmailVerification(@Body('email') email: string) {
     return await this.authService.sendEmailVerificationLink(email);
   }
 
   @Post('verify-email-token')
+  @ResponseMessage('Token verified successfully')
   async verifyEmail(@Body() { token, userId }: VerifyEmailDto) {
     return await this.authService.verifyEmail(token, userId);
   }
