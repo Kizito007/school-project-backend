@@ -85,6 +85,29 @@ export class AuthService {
     }
   }
 
+  async verifySecurityAnswer(securityAnswer: string, adminId: string) {
+    try {
+      const admin = await this.adminMgmtService.getAdmin('adminId', adminId);
+      if (!admin) throw new NotFoundException('Admin not found!');
+
+      const isSecurityAnswerMatch = admin.securityAnswer === securityAnswer;
+
+      if (!isSecurityAnswerMatch)
+        throw new UnauthorizedException('Answer Incorrect');
+
+      const token = this.jwtService.sign({
+        sub: admin.adminId,
+        adminId: admin.adminId,
+        email: admin.email,
+        role: admin.role,
+      });
+
+      return { token };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async signAdminJwt(adminId: string) {
     const admin = await this.adminMgmtService.getAdmin('adminId', adminId);
     if (!admin) throw new NotFoundException('Admin not found!');

@@ -1,7 +1,10 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AdminLocalAuthGuard } from './admin-local-auth.guard';
 import { AuthService } from './auth.service';
-import { VerifyEmailDto } from 'src/commerce-admin/auth/auth.dto';
+import {
+  VerifyAnswerDto,
+  VerifyEmailDto,
+} from 'src/commerce-admin/auth/auth.dto';
 import { ResponseMessage } from 'src/common/decorators';
 
 @Controller('commerce/admin/auth')
@@ -25,5 +28,13 @@ export class AuthController {
   @ResponseMessage('Token verified successfully')
   async verifyEmail(@Body() { token, userId }: VerifyEmailDto) {
     return await this.authService.verifyEmail(token, userId);
+  }
+
+  @Post('verify-security-answer')
+  @ResponseMessage('Security answer verified successfully')
+  async verifySecurityAnswer(
+    @Body() { securityAnswer, adminId }: VerifyAnswerDto,
+  ) {
+    return await this.authService.verifySecurityAnswer(securityAnswer, adminId);
   }
 }

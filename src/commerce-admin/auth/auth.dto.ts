@@ -20,3 +20,13 @@ export class VerifyEmailDto {
   @IsNotEmpty()
   readonly userId: string;
 }
+
+export class VerifyAnswerDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly securityAnswer: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly adminId: string;
+}
