@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
 import { JwtStrategy } from './jwt.strategy';
+import { MailgunService } from 'src/comms/mailgun.service';
 
 @Module({
   imports: [
@@ -31,7 +32,13 @@ import { JwtStrategy } from './jwt.strategy';
       }),
     }),
   ],
-  providers: [AuthService, LocalStrategy, UsersService, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    UsersService,
+    JwtStrategy,
+    MailgunService,
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

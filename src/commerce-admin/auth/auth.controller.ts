@@ -8,7 +8,7 @@ import { AuthUser } from './auth-user.decorator';
 import { UserDocument } from '../users/users.schema';
 import { ResponseMessage } from 'src/common/decorators';
 
-@Controller('commerce/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -31,12 +31,12 @@ export class AuthController {
     return user;
   }
 
-  @Post('resend-email-verification')
+  @Post('send-email-token')
   async resendEmailVerification(@Body('email') email: string) {
     return await this.authService.sendEmailVerificationLink(email);
   }
 
-  @Post('verify-email')
+  @Post('verify-email-token')
   async verifyEmail(@Body() { token, userId }: VerifyEmailDto) {
     return await this.authService.verifyEmail(token, userId);
   }

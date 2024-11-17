@@ -22,4 +22,6 @@ export class VerifyEmail {
 }
 
 const VerifyEmailSchema = SchemaFactory.createForClass(VerifyEmail);
+VerifyEmailSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 5 });
+
 export { VerifyEmailSchema };

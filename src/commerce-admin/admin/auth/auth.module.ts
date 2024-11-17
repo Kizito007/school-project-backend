@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './auth.controller';
@@ -16,13 +16,19 @@ import {
 } from 'src/faces/face-compare.schema';
 import { HttpModule } from '@nestjs/axios';
 import { FacesService } from 'src/faces/faces.service';
+import { AuthService } from './auth.service';
+import { MailgunService } from 'src/comms/mailgun.service';
+import {
+  VerifyEmail,
+  VerifyEmailSchema,
+} from 'src/commerce-admin/auth/verify-email.schema';
 
 @Module({
   imports: [
     PassportModule,
-    AdminMgmtModule,
     CloudinaryModule,
     HttpModule,
+    AdminMgmtModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -36,10 +42,18 @@ import { FacesService } from 'src/faces/faces.service';
     MongooseModule.forFeature([
       { name: CommerceAdmin.name, schema: CommerceAdminSchema },
       { name: FaceCompareToken.name, schema: FaceCompareTokenSchema },
+      { name: VerifyEmail.name, schema: VerifyEmailSchema },
     ]),
   ],
   controllers: [AuthController],
-  providers: [AdminLocalStrategy, AdminMgmtService, FilesService, FacesService],
-  exports: [],
+  providers: [
+    AdminLocalStrategy,
+    AuthService,
+    AdminMgmtService,
+    FilesService,
+    FacesService,
+    MailgunService,
+  ],
+  exports: [AuthService],
 })
 export class AuthModule {}

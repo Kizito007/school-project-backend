@@ -15,6 +15,7 @@ import { VerifyEmail, VerifyEmailDocument } from './verify-email.schema';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { AddUserDto } from '../users/users.dto';
+import { MailgunService } from 'src/comms/mailgun.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private usersService: UsersService,
+    private mailgunService: MailgunService,
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
     @InjectModel(VerifyEmail.name)
@@ -85,13 +87,12 @@ export class AuthService {
       const user = await this.usersService.getCredential('email', email);
 
       if (!user) throw new NotFoundException('No record found!');
-      if (user.emailVerified)
-        throw new BadRequestException(
-          'This email is already verified! If you have forgotten your password please reset it.',
-        );
+      // if (user.emailVerified)
+      //   throw new BadRequestException(
+      //     'This email is already verified! If you have forgotten your password please reset it.',
+      //   );
 
-      let verifyToken = KeyGen.gen(18);
-      verifyToken = await bcrypt.hash(verifyToken, 10);
+      const verifyToken = KeyGen.gen(6);
 
       await this.verifyEmailModel.findOneAndUpdate(
         { email },
@@ -104,6 +105,11 @@ export class AuthService {
           upsert: true,
         },
       );
+      await this.mailgunService.sendEmail(
+        user.email,
+        'OTP Verification',
+        `Your One Time Password is ${verifyToken}`,
+      );
     } catch (error) {
       throw error;
     }
@@ -113,8 +119,8 @@ export class AuthService {
     try {
       const user = await this.usersService.findUser('userId', userId);
       if (!user) throw new NotFoundException('User not found!');
-      if (user.emailVerified)
-        throw new BadRequestException('Email is already verified');
+      // if (user.emailVerified)
+      //   throw new BadRequestException('Email is already verified');
 
       const getVerifyTokenInDb = await this.verifyEmailModel.findOne({
         userId,
@@ -126,12 +132,12 @@ export class AuthService {
 
       if (!isVerifyTokenMatch) throw new UnauthorizedException('Invalid token');
 
-      await this.usersService.updateField(
-        'userId',
-        userId,
-        'emailVerified',
-        true,
-      );
+      // await this.usersService.updateField(
+      //   'userId',
+      //   userId,
+      //   'emailVerified',
+      //   true,
+      // );
 
       await this.verifyEmailModel.findOneAndDelete({ userId });
 
