@@ -32,7 +32,7 @@ export class OrdersService {
 
   async findOrders() {
     try {
-      const orders = await this.orderModel.findOne({});
+      const orders = await this.orderModel.find({});
       const totalOrdersCount = await this.orderModel.countDocuments();
 
       return { orders, totalOrdersCount };

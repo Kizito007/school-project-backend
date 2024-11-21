@@ -22,6 +22,12 @@ import {
   VerifyEmail,
   VerifyEmailSchema,
 } from 'src/commerce-admin/auth/verify-email.schema';
+import { User, UserSchema } from 'src/commerce-admin/users/users.schema';
+import { Order, OrderSchema } from 'src/commerce-admin/orders/orders.schema';
+import {
+  Product,
+  ProductSchema,
+} from 'src/commerce-admin/products/products.schema';
 
 @Module({
   imports: [
@@ -43,6 +49,9 @@ import {
       { name: CommerceAdmin.name, schema: CommerceAdminSchema },
       { name: FaceCompareToken.name, schema: FaceCompareTokenSchema },
       { name: VerifyEmail.name, schema: VerifyEmailSchema },
+      { name: User.name, schema: UserSchema },
+      { name: Product.name, schema: ProductSchema },
+      { name: Order.name, schema: OrderSchema },
     ]),
   ],
   controllers: [AuthController],

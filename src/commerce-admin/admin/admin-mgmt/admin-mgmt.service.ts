@@ -10,6 +10,12 @@ import { AddManagerDto, UpdateManagerRoleDto } from './admin-mgmt.dto';
 import { FilesService } from 'src/files/files.service';
 import { FacesService } from 'src/faces/faces.service';
 import { FaceTokenInexistingException } from 'src/common/exceptions';
+import { User, UserDocument } from 'src/commerce-admin/users/users.schema';
+import { Order, OrderDocument } from 'src/commerce-admin/orders/orders.schema';
+import {
+  Product,
+  ProductDocument,
+} from 'src/commerce-admin/products/products.schema';
 
 @Injectable()
 export class AdminMgmtService {
@@ -18,6 +24,12 @@ export class AdminMgmtService {
     private readonly adminModel: Model<CommerceAdminDocument>,
     @InjectModel(FaceCompareToken.name)
     private readonly faceCompareTokenModel: Model<FaceCompareTokenDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
+    @InjectModel(Order.name)
+    private readonly orderModel: Model<OrderDocument>,
+    @InjectModel(Product.name)
+    private readonly productModel: Model<ProductDocument>,
     private readonly filesService: FilesService,
     private readonly facesService: FacesService,
   ) {}
@@ -65,12 +77,18 @@ export class AdminMgmtService {
     result.forEach(({ _id, count }) => {
       data[_id] = count;
     });
+    const usersCount = await this.userModel.countDocuments();
+    const productCount = await this.productModel.countDocuments();
+    const orderCount = await this.orderModel.countDocuments();
 
     return {
       totalAccessManagers: totalAdminsCount,
       superAdmin: data.SUPER_ADMIN,
       editor: data.EDITOR,
       arbitrator: data.ARBITRATOR,
+      users: usersCount,
+      products: productCount,
+      orders: orderCount,
     };
   }
 
