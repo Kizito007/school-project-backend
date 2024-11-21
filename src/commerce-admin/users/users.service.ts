@@ -30,6 +30,17 @@ export class UsersService {
     }
   }
 
+  async getUsers() {
+    try {
+      const users = await this.userModel.find({});
+      const totalUsersCount = await this.userModel.countDocuments();
+
+      return { users, totalUsersCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getCredential(
     field: string,
     key: string,
