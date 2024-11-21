@@ -13,6 +13,7 @@ import {
 } from 'src/commerce-admin/auth/verify-email.schema';
 import { AdminMgmtService } from '../admin-mgmt/admin-mgmt.service';
 import { MailgunService } from 'src/comms/mailgun.service';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
     private adminMgmtService: AdminMgmtService,
     private mailgunService: MailgunService,
+    private nodemailerService: NodeMailerService,
     @InjectModel(VerifyEmail.name)
     private readonly verifyEmailModel: Model<VerifyEmailDocument>,
   ) {}
@@ -45,7 +47,7 @@ export class AuthService {
           upsert: true,
         },
       );
-      await this.mailgunService.sendEmail(
+      await this.nodemailerService.sendEmail(
         admin.email,
         'OTP Verification',
         `Your One Time Password is ${verifyToken}`,

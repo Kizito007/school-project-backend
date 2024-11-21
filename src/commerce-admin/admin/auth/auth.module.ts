@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './auth.controller';
@@ -18,6 +18,7 @@ import { HttpModule } from '@nestjs/axios';
 import { FacesService } from 'src/faces/faces.service';
 import { AuthService } from './auth.service';
 import { MailgunService } from 'src/comms/mailgun.service';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
 import {
   VerifyEmail,
   VerifyEmailSchema,
@@ -62,6 +63,7 @@ import {
     FilesService,
     FacesService,
     MailgunService,
+    NodeMailerService,
   ],
   exports: [AuthService],
 })
