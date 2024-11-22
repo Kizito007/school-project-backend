@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsNumberString,
+} from 'class-validator';
 import { File } from 'src/common/dtos';
 
 export class AddProductDto {
@@ -15,22 +21,21 @@ export class AddProductDto {
   readonly status: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsNumberString()
   readonly amount: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsNumberString()
   readonly percentageDiscount: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsNumberString()
   readonly availableStock: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsNumberString()
   readonly totalStock: number;
 
-  @IsOptional()
   photo: File;
 }
 

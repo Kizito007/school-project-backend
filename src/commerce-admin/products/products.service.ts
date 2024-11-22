@@ -4,12 +4,14 @@ import { Model } from 'mongoose';
 import { Product, ProductDocument } from './products.schema';
 import { AddProductDto, UpdateProductDto } from './products.dto';
 import { ProductNotFoundException } from 'src/common/exceptions';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
+    private filesService: FilesService,
   ) {}
 
   async findProduct(
@@ -41,10 +43,21 @@ export class ProductsService {
     }
   }
 
-  async addProduct({
-    ...addProductDto
-  }: AddProductDto): Promise<ProductDocument> {
+  async addProduct(
+    { ...addProductDto }: AddProductDto,
+    file: Express.Multer.File,
+  ): Promise<ProductDocument> {
     try {
+      if (file) {
+        const upload = await this.filesService.uploadFile(file);
+
+        addProductDto.photo = {
+          content: 'product-picture',
+          size: upload.bytes,
+          mimeType: file.mimetype,
+          url: upload.url,
+        };
+      }
       const newProduct = await this.productModel.create(addProductDto);
       if (!newProduct?.productId) {
         throw new InternalServerErrorException('Unable to add product');
