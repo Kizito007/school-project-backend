@@ -6,6 +6,8 @@ import {
   Body,
   Patch,
   Param,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   AddProductDto,
@@ -17,6 +19,7 @@ import { JwtPartialAuthGuard } from '../auth/admin-jwt-partial-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { ResponseMessage } from 'src/common/decorators';
 import { ProductsService } from 'src/commerce-admin/products/products.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('commerce/admin/product-mgmt')
 export class ProductMgmtController {
@@ -39,9 +42,14 @@ export class ProductMgmtController {
   @Post('products')
   @UseGuards(JwtPartialAuthGuard, RolesGuard)
   @Roles(AdminRole.SUPER_ADMIN, AdminRole.ARBITRATOR)
+  @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('Product added successfully')
-  async addProduct(@Body() addProductDto: AddProductDto) {
-    return await this.productsService.addProduct(addProductDto);
+  async addProduct(
+    @Body() addProductDto: AddProductDto,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ) {
+    return await this.productsService.addProduct(addProductDto, file);
   }
 
   @Patch('products/:productId')
