@@ -43,6 +43,7 @@ export class AdminMgmtService {
         email: 1,
         role: 1,
         _username: 1,
+        photo: 1,
         createdAt: 1,
       },
       {
