@@ -24,7 +24,7 @@ export class AddProductDto {
   @IsNumberString()
   readonly amount: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumberString()
   readonly percentageDiscount: number;
 
@@ -32,7 +32,7 @@ export class AddProductDto {
   @IsNumberString()
   readonly availableStock: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumberString()
   readonly totalStock: number;
 
