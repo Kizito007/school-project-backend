@@ -52,7 +52,7 @@ export class ProductsService {
         const upload = await this.filesService.uploadFile(file);
 
         addProductDto.photo = {
-          content: 'product-picture',
+          content: upload.public_id,
           size: upload.bytes,
           mimeType: file.mimetype,
           url: upload.url,
@@ -83,6 +83,20 @@ export class ProductsService {
         { $set: updateProductDto },
         { new: true },
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteProduct(productId: string) {
+    try {
+      const product = await this.findProduct('productId', productId);
+      if (!product) {
+        throw ProductNotFoundException();
+      }
+      await this.filesService.deleteImage(product.photo?.content);
+
+      return await this.productModel.findOneAndDelete({ productId });
     } catch (error) {
       throw error;
     }
