@@ -8,6 +8,7 @@ import {
   Param,
   UploadedFile,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { AuthUser } from 'src/commerce-admin/auth/auth-user.decorator';
 import { AdminMgmtService } from './admin-mgmt.service';
@@ -42,6 +43,13 @@ export class AdminMgmtController {
   @ResponseMessage('Admins fetched successfully')
   async getAdmins() {
     return await this.adminMgmtService.getAdmins();
+  }
+
+  @Get('users')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Users fetched successfully')
+  async getUsers() {
+    return await this.adminMgmtService.getUsers();
   }
 
   @Get('admins/stats')
@@ -129,5 +137,12 @@ export class AdminMgmtController {
   ) {
     updateManagerRoleDto.adminId = adminId;
     return await this.adminMgmtService.updateManagerRole(updateManagerRoleDto);
+  }
+
+  @Delete(':adminId')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Admin deleted successfully')
+  async deleteManager(@Param('adminId') adminId: string) {
+    return await this.adminMgmtService.deleteManager(adminId);
   }
 }

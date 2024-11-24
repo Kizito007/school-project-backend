@@ -54,6 +54,11 @@ export class AdminMgmtService {
     return data;
   }
 
+  async getUsers() {
+    const users: any[] = await this.userModel.find({});
+    return users;
+  }
+
   async getAdminStats() {
     // Get the count of all admins
     const totalAdminsCount = await this.adminModel.countDocuments();
@@ -119,7 +124,7 @@ export class AdminMgmtService {
       const upload = await this.filesService.uploadFile(file);
 
       addManagerDto.photo = {
-        content: 'profile-picture',
+        content: upload.public_id,
         size: upload.bytes,
         mimeType: file.mimetype,
         url: upload.url,
@@ -153,5 +158,11 @@ export class AdminMgmtService {
       },
       { new: true },
     );
+  }
+
+  async deleteManager(adminId: string) {
+    const admin = await this.adminModel.findOne({ adminId });
+    await this.filesService.deleteImage(admin.photo?.content);
+    return await this.adminModel.findOneAndDelete({ adminId });
   }
 }
