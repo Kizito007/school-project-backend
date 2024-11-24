@@ -8,6 +8,7 @@ import {
   Param,
   UseInterceptors,
   UploadedFile,
+  Delete,
 } from '@nestjs/common';
 import {
   AddProductDto,
@@ -62,5 +63,12 @@ export class ProductMgmtController {
   ) {
     updateProductDto.productId = productId;
     return await this.productsService.updateProduct(updateProductDto);
+  }
+
+  @Delete(':productId')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Product deleted successfully')
+  async deleteProduct(@Param('productId') productId: string) {
+    return await this.productsService.deleteProduct(productId);
   }
 }
