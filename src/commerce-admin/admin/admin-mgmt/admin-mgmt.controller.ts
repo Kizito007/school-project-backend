@@ -15,6 +15,7 @@ import { AdminMgmtService } from './admin-mgmt.service';
 import { UserPayload } from 'src/commerce-admin/users/users.dto';
 import {
   AddManagerDto,
+  SendEmailDto,
   UpdateManagerRoleDto,
   UploadTempFaceDto,
 } from './admin-mgmt.dto';
@@ -64,6 +65,13 @@ export class AdminMgmtController {
   @ResponseMessage('Admin fetched successfully')
   async getAdmin(@Param('adminId') adminId: string) {
     return await this.adminMgmtService.getAdmin('adminId', adminId);
+  }
+
+  @Post('send-bulk-email')
+  @UseGuards(JwtPartialAuthGuard, RolesGuard)
+  @ResponseMessage('Emails sent successfully')
+  async sendBulkEmail(@Body() sendEmailDto: SendEmailDto) {
+    return await this.adminMgmtService.sendBulkEmail(sendEmailDto);
   }
 
   @Post('admins')

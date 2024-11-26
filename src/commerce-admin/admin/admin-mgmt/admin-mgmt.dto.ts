@@ -58,6 +58,14 @@ export class SignInDto {
   readonly password: string;
 }
 
+export class SendEmailDto {
+  @IsNotEmpty()
+  readonly subject: string;
+
+  @IsNotEmpty()
+  readonly text: string;
+}
+
 export class UpdateManagerRoleDto {
   @IsNotEmpty()
   @IsEnum(AdminRole)

@@ -17,6 +17,7 @@ import {
   ProductSchema,
 } from 'src/commerce-admin/products/products.schema';
 import { Order, OrderSchema } from 'src/commerce-admin/orders/orders.schema';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
 
 @Module({
   imports: [
@@ -31,6 +32,6 @@ import { Order, OrderSchema } from 'src/commerce-admin/orders/orders.schema';
     ]),
   ],
   controllers: [AdminMgmtController],
-  providers: [AdminMgmtService, FilesService, FacesService],
+  providers: [AdminMgmtService, FilesService, FacesService, NodeMailerService],
 })
 export class AdminMgmtModule {}
