@@ -21,6 +21,7 @@ export class AddManagerDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(20)
+  @Transform(({ value }) => value.toLowerCase())
   readonly securityAnswer: string;
 
   @IsNotEmpty()
@@ -55,6 +56,14 @@ export class SignInDto {
 
   @IsNotEmpty()
   readonly password: string;
+}
+
+export class SendEmailDto {
+  @IsNotEmpty()
+  readonly subject: string;
+
+  @IsNotEmpty()
+  readonly text: string;
 }
 
 export class UpdateManagerRoleDto {

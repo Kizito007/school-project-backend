@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { KeyGen } from 'src/common/utils/key-gen';
-import { AdminRole } from './admin.enum';
+import { AdminRole, SecurityQuestion } from './admin.enum';
 import { File } from 'src/common/dtos';
 
 export type CommerceAdminDocument = CommerceAdmin & Document;
@@ -30,6 +30,9 @@ export class CommerceAdmin {
 
   @Prop({ required: true })
   addedById: string;
+
+  @Prop({ required: true, enum: SecurityQuestion })
+  securityQuestion: SecurityQuestion;
 
   @Prop({ default: null })
   securityAnswer: string;

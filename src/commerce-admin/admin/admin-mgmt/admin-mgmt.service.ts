@@ -16,6 +16,8 @@ import {
   Product,
   ProductDocument,
 } from 'src/commerce-admin/products/products.schema';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
+import { SendEmailDto } from './admin-mgmt.dto';
 
 @Injectable()
 export class AdminMgmtService {
@@ -32,6 +34,7 @@ export class AdminMgmtService {
     private readonly productModel: Model<ProductDocument>,
     private readonly filesService: FilesService,
     private readonly facesService: FacesService,
+    private readonly nodemailerService: NodeMailerService,
   ) {}
 
   async getAdmins() {
@@ -57,6 +60,15 @@ export class AdminMgmtService {
   async getUsers() {
     const users: any[] = await this.userModel.find({});
     return users;
+  }
+
+  async sendBulkEmail(sendEmailDto: SendEmailDto) {
+    const users = await this.userModel.find({});
+    const { subject, text } = sendEmailDto;
+    for (const user of users) {
+      const email = user.email;
+      await this.nodemailerService.sendEmail(email, subject, text);
+    }
   }
 
   async getAdminStats() {

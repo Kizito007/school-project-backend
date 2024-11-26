@@ -14,6 +14,7 @@ import {
 import { AdminMgmtService } from '../admin-mgmt/admin-mgmt.service';
 import { MailgunService } from 'src/comms/mailgun.service';
 import { NodeMailerService } from 'src/comms/nodemailer.service';
+import { NotAuthorizedToPerfromActionException } from 'src/common/exceptions';
 
 @Injectable()
 export class AuthService {
@@ -89,13 +90,29 @@ export class AuthService {
 
   async verifySecurityAnswer(securityAnswer: string, adminId: string) {
     try {
+      // Ensure the answer contains "The name of"
+      const lowercaseSecurityAnswer = securityAnswer.toLowerCase();
+      if (
+        !(
+          lowercaseSecurityAnswer.startsWith('the name of') ||
+          lowercaseSecurityAnswer.startsWith('the maiden name') ||
+          lowercaseSecurityAnswer.startsWith('my mother’s maiden name')
+        )
+      ) {
+        throw NotAuthorizedToPerfromActionException();
+      }
       const admin = await this.adminMgmtService.getAdmin('adminId', adminId);
       if (!admin) throw new NotFoundException('Admin not found!');
 
-      const isSecurityAnswerMatch = admin.securityAnswer === securityAnswer;
+      // Ensure the provided security answer contains the stored answer
+      if (!lowercaseSecurityAnswer.includes(admin.securityAnswer)) {
+        throw new UnauthorizedException(
+          'Security answer is incorrect or does not contain the expected response.',
+        );
+      }
 
-      if (!isSecurityAnswerMatch)
-        throw new UnauthorizedException('Answer Incorrect');
+      // if (!isSecurityAnswerMatch)
+      //   throw new UnauthorizedException('Answer Incorrect');
 
       const token = this.jwtService.sign({
         sub: admin.adminId,
