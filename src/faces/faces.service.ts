@@ -61,7 +61,7 @@ export class FacesService {
       adminId: uploadTempFaceDto.adminId,
     });
     if (faceCompareToken) {
-      throw FaceTokenExistsException();
+      return;
     }
     return await this.faceCompareTokenModel.create(uploadTempFaceDto);
   }
