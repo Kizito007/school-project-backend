@@ -21,6 +21,7 @@ export class AddManagerDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(20)
+  @Transform(({ value }) => value.toLowerCase())
   readonly securityAnswer: string;
 
   @IsNotEmpty()
