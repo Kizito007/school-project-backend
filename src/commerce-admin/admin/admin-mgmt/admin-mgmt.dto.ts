@@ -9,7 +9,7 @@ import {
   IsDate,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { AdminRole } from './admin.enum';
+import { AdminRole, SecurityQuestion } from './admin.enum';
 import { File } from 'src/common/dtos';
 
 export class AddManagerDto {
@@ -23,6 +23,10 @@ export class AddManagerDto {
   @MaxLength(20)
   @Transform(({ value }) => value.toLowerCase())
   readonly securityAnswer: string;
+
+  @IsEnum(SecurityQuestion)
+  @IsNotEmpty()
+  readonly securityQuestion: string;
 
   @IsNotEmpty()
   @IsEmail()
