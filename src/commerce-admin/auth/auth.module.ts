@@ -12,6 +12,8 @@ import { UsersService } from '../users/users.service';
 import { VerifyEmail, VerifyEmailSchema } from './verify-email.schema';
 import { JwtStrategy } from './jwt.strategy';
 import { MailgunService } from 'src/comms/mailgun.service';
+import { CloudinaryModule } from 'src/config/cloudinary.module';
+import { FilesService } from 'src/files/files.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { MailgunService } from 'src/comms/mailgun.service';
     ]),
     UsersModule,
     PassportModule,
+    CloudinaryModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -38,6 +41,7 @@ import { MailgunService } from 'src/comms/mailgun.service';
     UsersService,
     JwtStrategy,
     MailgunService,
+    FilesService,
   ],
   controllers: [AuthController],
   exports: [AuthService],
