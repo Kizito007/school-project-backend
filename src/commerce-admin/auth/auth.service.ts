@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { AddUserDto } from '../users/users.dto';
 import { MailgunService } from 'src/comms/mailgun.service';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private configService: ConfigService,
     private usersService: UsersService,
     private mailgunService: MailgunService,
+    private filesService: FilesService,
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
     @InjectModel(VerifyEmail.name)
@@ -45,8 +47,21 @@ export class AuthService {
     }
   }
 
-  async registerUser(addUserDto: AddUserDto): Promise<{ token: string }> {
+  async registerUser(
+    addUserDto: AddUserDto,
+    file: Express.Multer.File,
+  ): Promise<{ token: string }> {
     try {
+      if (file) {
+        const upload = await this.filesService.uploadFile(file);
+
+        addUserDto.photo = {
+          content: upload.public_id,
+          size: upload.bytes,
+          mimeType: file.mimetype,
+          url: upload.url,
+        };
+      }
       const newUser = await this.usersService.addUser(addUserDto);
 
       //   await this.sendEmailVerificationLink(newUser.email);

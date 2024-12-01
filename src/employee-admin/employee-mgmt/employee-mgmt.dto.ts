@@ -13,6 +13,14 @@ export class AddEmployeeDto {
 
   @IsOptional()
   @IsString()
+  readonly phone: string;
+
+  @IsOptional()
+  @IsString()
+  readonly address: string;
+
+  @IsOptional()
+  @IsString()
   readonly role: string;
 
   @IsOptional()

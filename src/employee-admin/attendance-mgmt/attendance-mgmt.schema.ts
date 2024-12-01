@@ -28,6 +28,16 @@ export class Attendance {
 
   @Prop({ default: null })
   scheduleOut: string;
+
+  @Prop({ default: false })
+  hasEarlyDeparture: boolean;
 }
 export type AttendanceDocument = Attendance & Document;
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance);
+
+AttendanceSchema.virtual('employee', {
+  ref: 'Employee',
+  localField: 'employeeId',
+  foreignField: 'employeeId',
+  justOne: true,
+});

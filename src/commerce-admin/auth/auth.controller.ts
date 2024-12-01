@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-// import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
 import { AddUserDto } from '../users/users.dto';
 import { LoginDto, VerifyEmailDto } from './auth.dto';
@@ -20,8 +28,13 @@ export class AuthController {
 
   @Post('register')
   @ResponseMessage('Registration successful')
-  async addUser(@Body() addUserDto: AddUserDto) {
-    return await this.authService.registerUser(addUserDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async addUser(
+    @Body() addUserDto: AddUserDto,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ) {
+    return await this.authService.registerUser(addUserDto, file);
   }
 
   @UseGuards(JwtAuthGuard)

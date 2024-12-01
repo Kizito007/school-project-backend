@@ -1,7 +1,8 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { ArrivalStatus, Departments } from 'src/common/enums';
 
 export class AddAttendanceDto {
+  @IsOptional()
   @IsEnum(ArrivalStatus)
   arrivalStatus?: ArrivalStatus;
 
@@ -28,4 +29,25 @@ export class AddAttendanceDto {
   @IsEnum(Departments)
   @IsOptional()
   department?: Departments;
+
+  @IsOptional()
+  attendanceId?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  hasEarlyDeparture?: boolean;
+}
+
+export class FilterAttendanceStatsQuery {
+  @IsString()
+  @IsOptional()
+  startDate?: string;
+
+  @IsString()
+  @IsOptional()
+  endDate?: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

@@ -16,6 +16,12 @@ export class Employee {
   lastname: string;
 
   @Prop({ default: null })
+  phone: string;
+
+  @Prop({ default: null })
+  address: string;
+
+  @Prop({ default: null })
   role: string;
 
   @Prop({ default: null, enum: Departments })
