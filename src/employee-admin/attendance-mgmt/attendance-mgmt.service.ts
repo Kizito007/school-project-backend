@@ -2,7 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Attendance, AttendanceDocument } from './attendance-mgmt.schema';
-import { AddAttendanceDto } from './attendance-mgmt.dto';
+import {
+  AddAttendanceDto,
+  FilterAttendanceStatsQuery,
+} from './attendance-mgmt.dto';
 import { ArrivalStatus, departmentsSchedule } from 'src/common/enums';
 
 @Injectable()
@@ -79,6 +82,53 @@ export class AttendanceMgmtService {
     }
   }
 
+  async signOutAttendance(
+    addAttendanceDto: AddAttendanceDto,
+  ): Promise<AttendanceDocument> {
+    try {
+      const { department } = addAttendanceDto;
+
+      // Validate department exists in the schedule
+      const departmentSchedule = departmentsSchedule[department.toUpperCase()];
+      if (!departmentSchedule) {
+        throw new BadRequestException(
+          `Department '${department}' does not exist in the schedule.`,
+        );
+      }
+
+      if (!addAttendanceDto.checkOut) {
+        const now = new Date();
+        const hours = now.getHours(); // Returns the hour (0-23)
+        const minutes = now.getMinutes().toString().padStart(2, '0'); // Returns the minute (0-59)
+
+        const checkOutTime = `${hours}:${minutes}`;
+        addAttendanceDto.checkOut = checkOutTime;
+      }
+
+      const { scheduleOut } = departmentSchedule;
+      addAttendanceDto.scheduleIn = scheduleOut;
+      addAttendanceDto.scheduleOut = scheduleOut;
+
+      const earlyDeparture = this.compareDepartureTimes(
+        addAttendanceDto.checkOut,
+        scheduleOut,
+      );
+
+      return await this.attendanceModel.findOneAndUpdate(
+        {
+          attendanceId: addAttendanceDto.attendanceId,
+        },
+        {
+          hasEarlyDeparture: earlyDeparture,
+          checkOut: addAttendanceDto.checkOut,
+        },
+        { new: true },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateField(
     key: string,
     value: string,
@@ -113,5 +163,50 @@ export class AttendanceMgmtService {
     }
 
     return arrivalStatus;
+  }
+
+  private compareDepartureTimes(time1: string, time2: string): boolean {
+    const [hours1, minutes1] = time1.split(':').map(Number);
+    const [hours2, minutes2] = time2.split(':').map(Number);
+
+    const totalMinutes1 = hours1 * 60 + minutes1;
+    const totalMinutes2 = hours2 * 60 + minutes2;
+
+    if (totalMinutes1 < totalMinutes2) {
+      return true;
+    }
+    return false;
+  }
+
+  async getAttendanceStatsByStatus({
+    startDate,
+    endDate,
+  }: FilterAttendanceStatsQuery): Promise<any> {
+    const matchStage: any = {
+      createdAt: { $gte: new Date(startDate) },
+    };
+
+    if (endDate) {
+      matchStage.createdAt.$lte = new Date(endDate);
+    }
+
+    const stats = await this.attendanceModel.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: '$arrivalStatus',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          status: '$_id',
+          count: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    return stats;
   }
 }

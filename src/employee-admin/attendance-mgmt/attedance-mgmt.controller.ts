@@ -1,7 +1,19 @@
-import { Controller, Get, Post, UseGuards, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Body,
+  Param,
+  Query,
+  Patch,
+} from '@nestjs/common';
 import { ResponseMessage } from 'src/common/decorators';
 import { JwtAuthGuard } from 'src/commerce-admin/auth/jwt-auth.guard';
-import { AddAttendanceDto } from './attendance-mgmt.dto';
+import {
+  AddAttendanceDto,
+  FilterAttendanceStatsQuery,
+} from './attendance-mgmt.dto';
 import { AttendanceMgmtService } from './attendance-mgmt.service';
 
 @Controller('attendance/attendance-mgmt')
@@ -30,5 +42,23 @@ export class AttendanceMgmtController {
   @ResponseMessage('Attendance fetched successfully')
   async getAllAttendance() {
     return await this.attendanceMgmtService.getAttendance();
+  }
+
+  @Get('stats')
+  @UseGuards(JwtAuthGuard)
+  @ResponseMessage('Attendance statistics fetched successfully')
+  async getAttendanceStats(
+    @Query() filterAttendanceStatsDto: FilterAttendanceStatsQuery,
+  ) {
+    return await this.attendanceMgmtService.getAttendanceStatsByStatus(
+      filterAttendanceStatsDto,
+    );
+  }
+
+  @Patch('sign-out')
+  @UseGuards(JwtAuthGuard)
+  @ResponseMessage('Signed out successfully')
+  async signOutAttendance(@Body() addAttendanceDto: AddAttendanceDto) {
+    return await this.attendanceMgmtService.signOutAttendance(addAttendanceDto);
   }
 }
