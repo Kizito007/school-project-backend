@@ -40,9 +40,14 @@ export class AddAttendanceDto {
 
 export class FilterAttendanceStatsQuery {
   @IsString()
-  startDate: string;
+  @IsOptional()
+  startDate?: string;
 
   @IsString()
   @IsOptional()
   endDate?: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

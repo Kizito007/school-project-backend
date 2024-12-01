@@ -40,8 +40,10 @@ export class AttendanceMgmtController {
   @Get('all-attendance')
   @UseGuards(JwtAuthGuard)
   @ResponseMessage('Attendance fetched successfully')
-  async getAllAttendance() {
-    return await this.attendanceMgmtService.getAttendance();
+  async getAllAttendance(
+    @Query() filterAttendanceDto: FilterAttendanceStatsQuery,
+  ) {
+    return await this.attendanceMgmtService.getAttendance(filterAttendanceDto);
   }
 
   @Get('stats')

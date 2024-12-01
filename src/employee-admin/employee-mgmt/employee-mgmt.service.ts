@@ -67,7 +67,7 @@ export class EmployeeMgmtService {
         const upload = await this.filesService.uploadFile(file);
 
         addEmployeeDto.photo = {
-          content: 'profile-picture',
+          content: upload.public_id,
           size: upload.bytes,
           mimeType: file.mimetype,
           url: upload.url,

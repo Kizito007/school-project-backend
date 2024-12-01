@@ -34,3 +34,10 @@ export class Attendance {
 }
 export type AttendanceDocument = Attendance & Document;
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance);
+
+AttendanceSchema.virtual('employee', {
+  ref: 'Employee',
+  localField: 'employeeId',
+  foreignField: 'employeeId',
+  justOne: true,
+});

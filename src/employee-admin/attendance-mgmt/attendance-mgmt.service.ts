@@ -32,9 +32,44 @@ export class AttendanceMgmtService {
     }
   }
 
-  async getAttendance(): Promise<Attendance[] | null | undefined> {
+  async getAttendance({
+    name,
+    startDate,
+    endDate,
+  }: FilterAttendanceStatsQuery): Promise<Attendance[] | null | undefined> {
     try {
-      const attendance = await this.attendanceModel.find({});
+      const matchStage: any = {
+        createdAt: {
+          $gte: startDate ? new Date(startDate) : Date.now(),
+          $lte: endDate ? new Date(endDate) : null,
+        },
+      };
+
+      // If a name filter is provided, add it to the match stage
+      if (name) {
+        matchStage['employee.firstname'] = { $regex: name, $options: 'i' }; // Case-insensitive match
+      }
+
+      const attendance = await this.attendanceModel
+        .find(matchStage, {}, { lean: true })
+        .populate({
+          path: 'employee',
+          select: {
+            firstname: 1,
+            lastname: 1,
+            photo: 1,
+            _id: 0,
+            employeeId: 0,
+          },
+          match: name
+            ? {
+                $or: [
+                  { firstname: { $regex: name, $options: 'i' } },
+                  { lastname: { $regex: name, $options: 'i' } },
+                ],
+              }
+            : undefined,
+        });
 
       return attendance;
     } catch (error) {
@@ -193,20 +228,43 @@ export class AttendanceMgmtService {
     const stats = await this.attendanceModel.aggregate([
       { $match: matchStage },
       {
-        $group: {
-          _id: '$arrivalStatus',
-          count: { $sum: 1 },
+        $facet: {
+          // Count total documents
+          totalCount: [{ $count: 'count' }],
+
+          // Group by arrival status
+          arrivalStats: [
+            {
+              $group: {
+                _id: '$arrivalStatus',
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                status: '$_id',
+                count: 1,
+                _id: 0,
+              },
+            },
+          ],
+
+          // Count early departures
+          earlyDepartures: [
+            { $match: { hasEarlyDeparture: true } },
+            { $count: 'count' },
+          ],
         },
       },
       {
         $project: {
-          status: '$_id',
-          count: 1,
-          _id: 0,
+          totalCount: { $arrayElemAt: ['$totalCount.count', 0] },
+          arrivalStats: 1,
+          earlyDepartures: { $arrayElemAt: ['$earlyDepartures.count', 0] },
         },
       },
     ]);
 
-    return stats;
+    return stats[0];
   }
 }
