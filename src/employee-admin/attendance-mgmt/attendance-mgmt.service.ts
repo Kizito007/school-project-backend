@@ -229,10 +229,7 @@ export class AttendanceMgmtService {
       { $match: matchStage },
       {
         $facet: {
-          // Count total documents
           totalCount: [{ $count: 'count' }],
-
-          // Group by arrival status
           arrivalStats: [
             {
               $group: {
@@ -240,16 +237,7 @@ export class AttendanceMgmtService {
                 count: { $sum: 1 },
               },
             },
-            {
-              $project: {
-                status: '$_id',
-                count: 1,
-                _id: 0,
-              },
-            },
           ],
-
-          // Count early departures
           earlyDepartures: [
             { $match: { hasEarlyDeparture: true } },
             { $count: 'count' },
@@ -265,6 +253,20 @@ export class AttendanceMgmtService {
       },
     ]);
 
-    return stats[0];
+    const { totalCount, arrivalStats, earlyDepartures } = stats[0];
+
+    // Transform arrivalStats into the desired object format
+    const status = arrivalStats.reduce((acc, { _id, count }) => {
+      acc[_id] = count;
+      return acc;
+    }, {});
+
+    return {
+      data: {
+        totalCount: totalCount || 0,
+        status,
+        earlyDepartures: earlyDepartures || 0,
+      },
+    };
   }
 }
