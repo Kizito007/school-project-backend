@@ -262,11 +262,9 @@ export class AttendanceMgmtService {
     }, {});
 
     return {
-      data: {
-        totalCount: totalCount || 0,
-        status,
-        earlyDepartures: earlyDepartures || 0,
-      },
+      totalCount: totalCount || 0,
+      status,
+      earlyDepartures: earlyDepartures || 0,
     };
   }
 }
