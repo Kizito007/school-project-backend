@@ -36,9 +36,10 @@ export class AttendanceMgmtService {
     name,
     startDate,
     endDate,
+    department,
   }: FilterAttendanceStatsQuery): Promise<Attendance[] | null | undefined> {
     try {
-      const matchStage: any = {
+      const filter: any = {
         createdAt: {
           $gte: startDate ? new Date(startDate) : Date.now(),
           $lte: endDate ? new Date(endDate) : null,
@@ -47,11 +48,14 @@ export class AttendanceMgmtService {
 
       // If a name filter is provided, add it to the match stage
       if (name) {
-        matchStage['employee.firstname'] = { $regex: name, $options: 'i' }; // Case-insensitive match
+        filter['employee.firstname'] = { $regex: name, $options: 'i' }; // Case-insensitive match
+      }
+      if (department) {
+        filter['department'] = department;
       }
 
       const attendance = await this.attendanceModel
-        .find(matchStage, {}, { lean: true })
+        .find(filter, {}, { lean: true })
         .populate({
           path: 'employee',
           select: {
