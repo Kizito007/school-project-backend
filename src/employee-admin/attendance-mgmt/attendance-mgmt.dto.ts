@@ -50,4 +50,8 @@ export class FilterAttendanceStatsQuery {
   @IsString()
   @IsOptional()
   name?: string;
+
+  @IsString()
+  @IsOptional()
+  department?: string;
 }
