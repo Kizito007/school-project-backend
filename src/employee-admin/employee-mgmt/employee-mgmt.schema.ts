@@ -16,6 +16,9 @@ export class Employee {
   lastname: string;
 
   @Prop({ default: null })
+  email: string;
+
+  @Prop({ default: null })
   phone: string;
 
   @Prop({ default: null })
@@ -29,6 +32,12 @@ export class Employee {
 
   @Prop({ default: null })
   photo: File;
+
+  @Prop({ default: null })
+  scheduleIn: string;
+
+  @Prop({ default: null })
+  scheduleOut: string;
 }
 export type EmployeeDocument = Employee & Document;
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);

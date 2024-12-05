@@ -13,6 +13,10 @@ export class AddEmployeeDto {
 
   @IsOptional()
   @IsString()
+  readonly email: string;
+
+  @IsOptional()
+  @IsString()
   readonly phone: string;
 
   @IsOptional()
@@ -29,4 +33,12 @@ export class AddEmployeeDto {
   @IsEnum(Departments)
   @IsOptional()
   department: Departments;
+
+  @IsOptional()
+  @IsString()
+  scheduleIn?: string;
+
+  @IsOptional()
+  @IsString()
+  scheduleOut?: string;
 }
