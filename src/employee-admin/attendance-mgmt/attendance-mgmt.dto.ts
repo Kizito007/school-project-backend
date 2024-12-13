@@ -54,4 +54,8 @@ export class FilterAttendanceStatsQuery {
   @IsString()
   @IsOptional()
   department?: string;
+
+  @IsString()
+  @IsOptional()
+  employeeId?: string;
 }

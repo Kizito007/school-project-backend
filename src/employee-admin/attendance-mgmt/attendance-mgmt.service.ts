@@ -37,25 +37,28 @@ export class AttendanceMgmtService {
     startDate,
     endDate,
     department,
+    employeeId,
   }: FilterAttendanceStatsQuery): Promise<Attendance[] | null | undefined> {
     try {
       const filter: any = {
         createdAt: {
           $gte: startDate ? new Date(startDate) : Date.now(),
-          $lte: endDate ? new Date(endDate) : null,
+          ...(endDate ? { $lte: new Date(endDate) } : {}),
         },
       };
 
-      // If a name filter is provided, add it to the match stage
-      if (name) {
-        filter['employee.firstname'] = { $regex: name, $options: 'i' }; // Case-insensitive match
-      }
+      // Add additional filters if provided
       if (department) {
         filter['department'] = department;
       }
+      if (employeeId) {
+        filter['employeeId'] = employeeId;
+      }
 
+      // Query the attendance data
       const attendance = await this.attendanceModel
         .find(filter, {}, { lean: true })
+        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
         .populate({
           path: 'employee',
           select: {
@@ -220,6 +223,7 @@ export class AttendanceMgmtService {
   async getAttendanceStatsByStatus({
     startDate,
     endDate,
+    employeeId,
   }: FilterAttendanceStatsQuery): Promise<any> {
     const matchStage: any = {
       createdAt: { $gte: new Date(startDate) },
@@ -227,6 +231,9 @@ export class AttendanceMgmtService {
 
     if (endDate) {
       matchStage.createdAt.$lte = new Date(endDate);
+    }
+    if (employeeId) {
+      matchStage['employeeId'] = employeeId;
     }
 
     const stats = await this.attendanceModel.aggregate([
