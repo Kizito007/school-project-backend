@@ -224,6 +224,7 @@ export class AttendanceMgmtService {
     startDate,
     endDate,
     employeeId,
+    department,
   }: FilterAttendanceStatsQuery): Promise<any> {
     const matchStage: any = {
       createdAt: { $gte: new Date(startDate) },
@@ -234,6 +235,9 @@ export class AttendanceMgmtService {
     }
     if (employeeId) {
       matchStage['employeeId'] = employeeId;
+    }
+    if (department) {
+      matchStage['department'] = department;
     }
 
     const stats = await this.attendanceModel.aggregate([
