@@ -80,4 +80,17 @@ export class EmployeeMgmtController {
   async compareFace(@Param('employeeId') employeeId: string) {
     return await this.employeeMgmtService.compareFace(employeeId);
   }
+
+  @Post('sign-out-face/:employeeId/:attendanceId')
+  @UseGuards(JwtAuthGuard)
+  @ResponseMessage('Face comparison successful')
+  async compareFaceForSignOut(
+    @Param('employeeId') employeeId: string,
+    @Param('attendanceId') attendanceId: string,
+  ) {
+    return await this.employeeMgmtService.compareFaceForSignOut(
+      employeeId,
+      attendanceId,
+    );
+  }
 }
