@@ -123,4 +123,32 @@ export class EmployeeMgmtService {
     await this.faceCompareTokenModel.findOneAndDelete({ adminId: employeeId });
     return comparison;
   }
+
+  async compareFaceForSignOut(employeeId: string, attendanceId: string) {
+    const faceCompareToken = await this.faceCompareTokenModel.findOne({
+      adminId: employeeId,
+    });
+    if (!faceCompareToken) throw FaceTokenInexistingException();
+    const employee = await this.employeeModel.findOne({ employeeId });
+    const imageUrl1 = faceCompareToken.photo?.url;
+    const imageUrl2 = employee.photo?.url;
+    const comparison = await this.facesService.compareFace(
+      imageUrl1,
+      imageUrl2,
+    );
+    // if comparison data confidence is high > 85 add attendance face may be tired
+    if (comparison && comparison.confidence > 75) {
+      const addAttendanceDto: AddAttendanceDto = {
+        employeeId: employee.employeeId,
+        department: employee.department,
+        attendanceId,
+      };
+
+      await this.attendanceMgmtService.signOutAttendance(addAttendanceDto);
+    }
+
+    await this.filesService.deleteImage(faceCompareToken.photo?.content);
+    await this.faceCompareTokenModel.findOneAndDelete({ adminId: employeeId });
+    return comparison;
+  }
 }
