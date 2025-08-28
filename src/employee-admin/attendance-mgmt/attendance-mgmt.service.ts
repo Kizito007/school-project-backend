@@ -100,7 +100,7 @@ export class AttendanceMgmtService {
 
       if (!addAttendanceDto.checkIn) {
         const now = new Date();
-        const hours = now.getHours(); // Returns the hour (0-23)
+        const hours = now.getHours() + 1; // Returns the hour (0-23)
         const minutes = now.getMinutes().toString().padStart(2, '0'); // Returns the minute (0-59)
 
         const checkInTime = `${hours}:${minutes}`;
