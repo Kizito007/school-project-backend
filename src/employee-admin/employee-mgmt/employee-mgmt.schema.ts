@@ -36,8 +36,14 @@ export class Employee {
   @Prop({ default: null })
   scheduleIn: string;
 
-  @Prop({ default: null })
-  scheduleOut: string;
+  @Prop({ default: 0 })
+  salary: number;
+
+  @Prop({ default: 0 })
+  additions: number;
+
+  @Prop({ default: 0 })
+  deductions: number;
 }
 export type EmployeeDocument = Employee & Document;
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
