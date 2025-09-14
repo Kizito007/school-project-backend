@@ -67,6 +67,7 @@ export class AttendanceMgmtService {
             photo: 1,
             additions: 1,
             deductions: 1,
+            role: 1,
             salary: 1,
             _id: 0,
             employeeId: 0,
