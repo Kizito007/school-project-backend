@@ -49,10 +49,10 @@ export class AttendanceMgmtService {
 
       // Add additional filters if provided
       if (department) {
-        filter['department'] = department;
+        filter['department'] = { $regex: department, $options: 'i' };
       }
       if (employeeId) {
-        filter['employeeId'] = employeeId;
+        filter['employeeId'] = { $regex: employeeId, $options: 'i' };
       }
 
       // Query the attendance data
@@ -65,6 +65,9 @@ export class AttendanceMgmtService {
             firstname: 1,
             lastname: 1,
             photo: 1,
+            additions: 1,
+            deductions: 1,
+            salary: 1,
             _id: 0,
             employeeId: 0,
           },
@@ -227,17 +230,18 @@ export class AttendanceMgmtService {
     department,
   }: FilterAttendanceStatsQuery): Promise<any> {
     const matchStage: any = {
-      createdAt: { $gte: new Date(startDate) },
+      createdAt: {
+        $gte: startDate ? new Date(startDate) : {},
+        ...(endDate ? { $lte: new Date(endDate) } : {}),
+      },
     };
 
-    if (endDate) {
-      matchStage.createdAt.$lte = new Date(endDate);
+    // Add additional filters if provided
+    if (department) {
+      matchStage['department'] = { $regex: department, $options: 'i' };
     }
     if (employeeId) {
-      matchStage['employeeId'] = employeeId;
-    }
-    if (department) {
-      matchStage['department'] = department;
+      matchStage['employeeId'] = { $regex: employeeId, $options: 'i' };
     }
 
     const stats = await this.attendanceModel.aggregate([
