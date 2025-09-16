@@ -231,18 +231,17 @@ export class AttendanceMgmtService {
     department,
   }: FilterAttendanceStatsQuery): Promise<any> {
     const matchStage: any = {
-      createdAt: {
-        $gte: startDate ? new Date(startDate) : {},
-        ...(endDate ? { $lte: new Date(endDate) } : {}),
-      },
+      createdAt: { $gte: new Date(startDate) },
     };
 
-    // Add additional filters if provided
-    if (department) {
-      matchStage['department'] = { $regex: department, $options: 'i' };
+    if (endDate) {
+      matchStage.createdAt.$lte = new Date(endDate);
     }
     if (employeeId) {
-      matchStage['employeeId'] = { $regex: employeeId, $options: 'i' };
+      matchStage['employeeId'] = employeeId;
+    }
+    if (department) {
+      matchStage['department'] = department;
     }
 
     const stats = await this.attendanceModel.aggregate([
