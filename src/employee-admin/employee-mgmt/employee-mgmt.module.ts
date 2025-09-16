@@ -16,6 +16,7 @@ import {
 import { FilesService } from 'src/files/files.service';
 import { CloudinaryModule } from 'src/config/cloudinary.module';
 import { AttendanceMgmtService } from '../attendance-mgmt/attendance-mgmt.service';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AttendanceMgmtService } from '../attendance-mgmt/attendance-mgmt.servic
     FacesService,
     FilesService,
     AttendanceMgmtService,
+    NodeMailerService,
   ],
 })
 export class EmployeeMgmtModule {}
