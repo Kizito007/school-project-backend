@@ -7,12 +7,17 @@ import {
   FilterAttendanceStatsQuery,
 } from './attendance-mgmt.dto';
 import { ArrivalStatus, departmentsSchedule } from 'src/common/enums';
+import { NodeMailerService } from 'src/comms/nodemailer.service';
+import { Employee } from '../employee-mgmt/employee-mgmt.schema';
 
 @Injectable()
 export class AttendanceMgmtService {
   constructor(
     @InjectModel(Attendance.name)
     private readonly attendanceModel: Model<AttendanceDocument>,
+    @InjectModel(Employee.name)
+    private readonly employeeModel: Model<AttendanceDocument>,
+    private readonly nodemailerService: NodeMailerService,
   ) {}
 
   async findAttendance(
@@ -120,6 +125,33 @@ export class AttendanceMgmtService {
         scheduleIn,
       );
       addAttendanceDto.arrivalStatus = arrivalStatus;
+
+      // send an email notification if the employee is late 3 times in a week
+      if (arrivalStatus === ArrivalStatus.LATE) {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const lateCount = await this.attendanceModel.countDocuments({
+          employeeId: addAttendanceDto.employeeId,
+          arrivalStatus: ArrivalStatus.LATE,
+          createdAt: { $gte: oneWeekAgo },
+        });
+        const employee: Employee = await this.employeeModel.findOne(
+          { employeeId: addAttendanceDto.employeeId },
+          { firstname: 1, lastname: 1, email: 1, _id: 0 },
+        );
+        if (lateCount >= 3) {
+          await this.nodemailerService.sendEmail(
+            employee.email,
+            'Late Attendance Warning',
+            `
+            Dear ${employee.firstname} ${employee.lastname},
+
+            We have noticed that you have been late to work 3 times in the past week. 
+            Please be reminded of the importance of punctuality and adhering to your scheduled work hours.
+            `,
+          );
+        }
+      }
 
       const newAttendance = await this.attendanceModel.create(addAttendanceDto);
       return newAttendance;
@@ -231,18 +263,17 @@ export class AttendanceMgmtService {
     department,
   }: FilterAttendanceStatsQuery): Promise<any> {
     const matchStage: any = {
-      createdAt: {
-        $gte: startDate ? new Date(startDate) : {},
-        ...(endDate ? { $lte: new Date(endDate) } : {}),
-      },
+      createdAt: { $gte: new Date(startDate) },
     };
 
-    // Add additional filters if provided
-    if (department) {
-      matchStage['department'] = { $regex: department, $options: 'i' };
+    if (endDate) {
+      matchStage.createdAt.$lte = new Date(endDate);
     }
     if (employeeId) {
-      matchStage['employeeId'] = { $regex: employeeId, $options: 'i' };
+      matchStage['employeeId'] = employeeId;
+    }
+    if (department) {
+      matchStage['department'] = department;
     }
 
     const stats = await this.attendanceModel.aggregate([

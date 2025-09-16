@@ -28,6 +28,10 @@ export class AddEmployeeDto {
   readonly role: string;
 
   @IsOptional()
+  @IsString()
+  readonly salary: string;
+
+  @IsOptional()
   photo: File;
 
   @IsEnum(Departments)
